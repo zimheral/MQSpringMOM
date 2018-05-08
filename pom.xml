@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.zimheral</groupId>
+	<artifactId>mqspringmom</artifactId>
+	<version>1.0</version>
+	<packaging>jar</packaging>
+
+	<name>MQSpringMOM</name>
+	<description>MOM that listens messages from an IBM MQ broker and routes to an activeMQ instance </description>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.0.1.RELEASE</version>
+		<relativePath/> 
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+		<install.dir>/opt/apps/MQSpringMOM</install.dir>		
+	</properties>
+		
+	<build>
+		<plugins>			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+			
+			<plugin> 
+			    <artifactId>maven-dependency-plugin</artifactId> 
+			    <executions> 
+			      <execution> 
+			        <phase>install</phase> 
+			          <goals> 
+			            <goal>copy-dependencies</goal> 
+			          </goals> 
+			          <configuration> 
+			             <outputDirectory>${project.build.directory}/libs</outputDirectory> 
+			          </configuration> 
+			        </execution> 
+			      </executions> 
+    		</plugin> 
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>**/application.yml</exclude>
+						<exclude>**/log4j2.xml</exclude>
+					</excludes>
+					<outputDirectory>${project.build.directory}/libs</outputDirectory> 
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<configuration>
+							<target>
+								<copy todir="${install.dir}/lib">
+									<fileset
+										dir="${project.build.directory}/libs"
+										includes="**" />
+								</copy>
+
+								<copy todir="${install.dir}">
+									<fileset dir="scripts/" includes="**" />
+								</copy>
+								<copy todir="${install.dir}/resources">
+									<fileset dir="src/main/resources" includes="log4j2.xml" />
+								</copy>
+								<mkdir dir="${install.dir}/logs" />
+								<mkdir dir="${install.dir}/PIDs" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>install</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${install.dir}/resources</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/src/main/resources</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>			
+		</plugins>
+	</build>
+	
+	<dependencies>			
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-activemq</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.ibm</groupId>
+			<artifactId>mq.allclient</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.jms</groupId>
+			<artifactId>javax.jms-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+		</dependency>		
+		
+	</dependencies>
+	
+	<repositories>
+		<repository>
+			<id>repo-local</id>
+			<url>file:///${project.basedir}/repo-local</url>
+		</repository>
+	</repositories>	
+</project>

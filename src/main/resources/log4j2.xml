@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+  <Appenders>
+      
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{MM-dd-yyyy HH:mm:ss} %-5p	%m%n" />
+    </Console>
+    
+    <RollingFile name="RollingFile">
+      <FileName>logs/mqspringmom.log</FileName>
+      <FilePattern>logs/mqspringmom.%d{yyyy-MM-dd}.log</FilePattern>
+      <PatternLayout>
+        <Pattern>%d{MM-dd-yyyy HH:mm:ss} %-5p	%m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+      </Policies>
+      <DefaultRolloverStrategy max="5" />
+    </RollingFile>
+
+  </Appenders>
+  
+  <Loggers>
+    <Logger name="com.zimheral.mqspringmom" level="info" additivity="false">
+      <AppenderRef ref="RollingFile" />
+      <AppenderRef ref="Console" />
+    </Logger>  
+	<Logger name="org.springframework.jms.listener.DefaultMessageListenerContainer" level="info"/> 
+ 
+  </Loggers>
+</Configuration>

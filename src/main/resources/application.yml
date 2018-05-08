@@ -1,0 +1,27 @@
+project:
+  version: '@project.version@' #taken from pom
+  mq:
+    host: localhost
+    port: 1414
+    queue-manager: MQ.MGR
+    channel: MQ.CHANNEL
+    username: 
+    password: 
+    receive-timeout: 2000    
+    mqQueue: MQ.QUEUE
+    concurrentConsumers: 200
+  activeMQ:
+    url: tcp://localhost:61616
+    username: admin
+    password: admin    
+    receive-timeout: 2000
+    activeQueues: mqspringqueue1,mqspringqueue2,mqspringqueue3,mqspringqueue4
+spring:
+    main:
+      logStartupInfo: false
+      banner-mode: "off"
+            
+#Comment this property if testing from the eclipse IDE
+logging:
+    config: resources/log4j2.xml
+    
